@@ -62,4 +62,79 @@ on pages.page_id=page_likes.page_id
 where page_likes.liked_date is null
 order by pages.page_id;
 
+--MID-COURSE TEST
+--ex1
+select distinct replacement_cost from film
+order by replacement_cost asc;
+
+--ex2
+select  
+sum (case when replacement_cost between 9.99 and 19.99 then 1 else 0 end) as low,
+sum (case when replacement_cost between 20.00 and 24.99 then 1 else 0 end) as medium, 
+sum (case when replacement_cost between 25.00 and 29.99 then 1 else 0 end) as high
+from film;
+
+--ex3
+select film.title , film.length, category.name
+from film
+join film_category 
+on film.film_id = film_category.film_id
+join category
+on film_category.category_id = category.category_id
+where category.name in ('Drama', 'Sports')
+order by film.length desc;
+
+--ex4
+select category.name,
+count (film.title) as count_titles
+from film
+join film_category 
+on film.film_id = film_category.film_id
+join category
+on film_category.category_id = category.category_id
+group by category.name
+order by count (film.title) desc;
+
+--ex5 (bài này mình không tính ra được Susan David 54)
+select 
+concat (actor.first_name, ' ', actor.last_name) as full_name,
+count (film_actor.film_id) as film_number
+from actor
+full join film_actor
+on actor.actor_id = film_actor.actor_id
+group by actor.actor_id 
+order by film_number desc;
+
+--ex6
+select 
+count (address.address_id) as count_address
+from address
+left join customer
+on address.address_id =customer.address_id
+where customer.customer_id is null;
+
+--ex7 
+select 
+count (address.address_id) as count_address
+from address
+left join customer
+on address.address_id =customer.address_id
+where customer.customer_id is null;
+
+--ex8
+select 
+concat (t4.city, ', ', t5.country) as city_country,
+sum (t1.amount) as city_amount
+from payment as t1
+join customer as t2
+on t1.customer_id = t2.customer_id
+join address as t3
+on t2.address_id = t3.address_id
+join city as t4
+on t3.city_id = t4.city_id
+join country as t5
+on t4.country_id = t5.country_id
+group by city_country
+order by city_amount asc;
+
 
