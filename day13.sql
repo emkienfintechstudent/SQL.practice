@@ -15,6 +15,25 @@ where extract (year from transaction_date) = 2022
 group by category, product
 order by category, total_spend desc;
 
+--ex2 sửa
+with cte1 as (select category, product,
+sum(spend) as total_spend
+from product_spend
+where extract (year from transaction_date) = 2022
+group by category, product
+order by category, total_spend desc
+limit 2),
+cte2 as (select category, product,
+sum(spend) as total_spend
+from product_spend
+where extract (year from transaction_date) = 2022
+group by category, product
+order by category desc, total_spend desc
+limit 2)
+select * from cte1
+union all select * from cte2;
+
+
 --ex3
 select count(*) from (select policy_holder_id,
 count(case_id) as count_case
@@ -41,12 +60,30 @@ group by user_id) as count_table
 where action_count >2;
 
 --ex6
-mình dùng thử cả to_char và extract nhưng đều không được? không biết vì sao mong bạn giải đáp giúp mình
+select 
+date_format (trans_date, '%y-%m') as month,
+country,
+count(id) as trans_count,
+sum(case when state = 'approved' then 1 else 0 end) as approved_count,
+sum(amount) as trans_total_amount,
+sum (case when state = 'approved' then amount else 0 end) as approved_total_amount
+from Transactions
+group by date_format (trans_date, '%y-%m') and country;
 
 --ex7 
 select product_id, year as first_year, quantity, price from sales
 where (product_id, year) in (select product_id,
 min (year) from sales group by product_id;
+
+--ex7 sửa
+with cte as (select product_id, 
+min (year) as min_year 
+from sales
+group by product_id)
+select t1.product_id, t2.min_year, t1.quantity, t1.price
+from Sales as t1
+join cte as t2
+on t1.product_id = t2.product_id and t1.year = t2.min_year; 
 
 --ex8
 select customer_id
