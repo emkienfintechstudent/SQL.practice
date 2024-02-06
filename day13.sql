@@ -77,10 +77,10 @@ min (year) from sales group by product_id;
 
 --ex7 sửa
 with cte as (select product_id, 
-min (year) as min_year 
+min(year) as min_year 
 from sales
 group by product_id)
-select t1.product_id, t2.min_year, t1.quantity, t1.price
+select t1.product_id, t2.min_year as first_year, t1.quantity, t1.price
 from Sales as t1
 join cte as t2
 on t1.product_id = t2.product_id and t1.year = t2.min_year; 
